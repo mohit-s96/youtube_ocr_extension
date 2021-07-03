@@ -4,9 +4,6 @@ import { createWorker } from "tesseract.js";
 chrome.runtime.sendMessage({ todo: "showPageAction" });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.todo === "testMessage") {
-    document.body.innerHTML += `<div>${request.value}</div>`;
-  }
 
   if (request.todo === "sendPageInfo") {
     sendResponse({ todo: "pageInfo", uri: window.location.href });
@@ -48,12 +45,12 @@ function cropInit() {
   let pX = containerDimensions.x;
   let pY = containerDimensions.y;
   const box = document.createElement("div");
-  var flag = false;
+  let flag = false;
   box.id = "ocr_testDiv";
   box.style.border = "2px solid cyan";
   box.style.position = "absolute";
   document.body.appendChild(box);
-  var div = document.getElementById("ocr_testDiv"),
+  let div = document.getElementById("ocr_testDiv"),
     x1 = 0,
     y1 = 0,
     x2 = 0,
@@ -61,10 +58,10 @@ function cropInit() {
   div.hidden = 1;
 
   function reCalc() {
-    var x3 = Math.min(x1, x2);
-    var x4 = Math.max(x1, x2);
-    var y3 = Math.min(y1, y2);
-    var y4 = Math.max(y1, y2);
+    const x3 = Math.min(x1, x2);
+    const x4 = Math.max(x1, x2);
+    const y3 = Math.min(y1, y2);
+    const y4 = Math.max(y1, y2);
     div.style.left = x3 + "px";
     div.style.top = y3 + "px";
     div.style.width = x4 - x3 + "px";
@@ -72,7 +69,7 @@ function cropInit() {
   }
   window.addEventListener("mousedown", downFunction);
   window.addEventListener("mousemove", moveFunction);
-  window.addEventListener("mouseup", cropAndStuff);
+  window.addEventListener("mouseup", cropOnMouseDown);
   function downFunction(e) {
     flag = false;
     if (!flag) {
@@ -89,8 +86,7 @@ function cropInit() {
       reCalc();
     }
   }
-  function cropAndStuff() {
-    console.log(div.getBoundingClientRect());
+  function cropOnMouseDown() {
 
     sendLoadingMessage();
     renderResultsOverlay();
@@ -119,28 +115,24 @@ function cropInit() {
 
     window.removeEventListener("mousemove", moveFunction);
     window.removeEventListener("mousedown", downFunction);
-    window.removeEventListener("mouseup", cropAndStuff);
+    window.removeEventListener("mouseup", cropOnMouseDown);
     flag = true;
     div.hidden = 1;
   }
   function screenshot(options = {}) {
-    var canvas = document.createElement("canvas");
-    var video = screenshotTarget;
-    var ctx = canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    const video = screenshotTarget;
+    const ctx = canvas.getContext("2d");
 
-    // Change the size here
     canvas.width = parseInt(video.offsetWidth);
     canvas.height = parseInt(video.offsetHeight);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // return canvas.toDataURL("image/png");
-
     let h = options.height;
     let w = options.width;
-    var imageData = ctx.getImageData(options.x, options.y, w, h);
-    // return "55";
-    var canvas1 = document.createElement("canvas");
-    var ctx_ = canvas1.getContext("2d");
+    const imageData = ctx.getImageData(options.x, options.y, w, h);
+    const canvas1 = document.createElement("canvas");
+    const ctx_ = canvas1.getContext("2d");
     canvas1.width = w;
     canvas1.height = h;
     ctx_.rect(0, 0, w, h);

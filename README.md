@@ -51,7 +51,7 @@ The text is read using the [TesseractJS](https://github.com/naptha/tesseract.js/
 
 #### Sometimes it doesn't read the text / reads wrong text. What's the issue?
 
-As stated earlier this is based on a pre trained model which was trained for English text with arounf 2500 fonts. The font of your target text might be different of it might have text which isn't recognized by the engine. I am working on training new models but it will take some time.
+As stated earlier this is based on a pre trained model which was trained for English text with around 2500 fonts. The font of your target text might be different or it might have text which isn't recognized by the engine. I am working on training new models but it will take some time.
 
 #### Can it read code ?
 

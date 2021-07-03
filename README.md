@@ -5,7 +5,7 @@
 # Youtube OCR - Read text from within a youtube video
 
 This is a 100% client-side chrome extension which allows you to read text from witihin a youtube video.
-This is achieved through using the TesseractJS library which wraps the emscripten port of the original tesseract implementation.
+This is achieved through the TesseractJS library which wraps the emscripten port of the original tesseract implementation.
 
 ## Motivation
 

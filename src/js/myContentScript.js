@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createWorker } from "tesseract.js";
 
 chrome.runtime.sendMessage({ todo: "showPageAction" });

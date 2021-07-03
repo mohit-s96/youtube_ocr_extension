@@ -1,6 +1,6 @@
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 
-![Logo](https://firebasestorage.googleapis.com/v0/b/whiner2-82d5e.appspot.com/o/YT_OCR-removebg-preview.png?alt=media&token=12ddd677-d70f-4fa1-84ce-46aabae63949)
+![Logo](/assets/favicon.png)
 
 # Youtube OCR - Read text from within a youtube video
 

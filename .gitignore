@@ -1,0 +1,6 @@
+node_modules
+build
+test
+secrets.*.js
+
+.DS_Store

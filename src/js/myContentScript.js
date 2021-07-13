@@ -88,11 +88,11 @@ function cropInit() {
     }
   }
   function cropOnMouseDown() {
-    screenshotTarget.style.cursor = "pointer";
+    screenshotTarget.style.cursor = "unset";
     sendLoadingMessage();
     renderResultsOverlay();
     const boxDimensions = div.getBoundingClientRect();
-
+    div.remove();
     console.log("cropFigures => ", {
       width: boxDimensions.width,
       height: boxDimensions.height,

@@ -4,7 +4,6 @@ import { createWorker } from "tesseract.js";
 chrome.runtime.sendMessage({ todo: "showPageAction" });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-
   if (request.todo === "sendPageInfo") {
     sendResponse({ todo: "pageInfo", uri: window.location.href });
   }
@@ -40,6 +39,8 @@ function cropInit() {
   const screenshotTarget = document.querySelector(
     ".video-stream.html5-main-video"
   );
+
+  screenshotTarget.style.cursor = "crosshair";
 
   const containerDimensions = screenshotTarget.getBoundingClientRect();
   let pX = containerDimensions.x;
@@ -87,7 +88,7 @@ function cropInit() {
     }
   }
   function cropOnMouseDown() {
-
+    screenshotTarget.style.cursor = "pointer";
     sendLoadingMessage();
     renderResultsOverlay();
     const boxDimensions = div.getBoundingClientRect();
@@ -107,6 +108,9 @@ function cropInit() {
         y: boxDimensions.y - pY,
         useCORS: true,
       });
+      // const img = document.createElement("img");
+      // img.src = uri;
+      // window.open().document.body.appendChild(img);
       readImage(uri);
     } catch (error) {
       console.trace("Trace");
@@ -139,6 +143,7 @@ function cropInit() {
     ctx_.putImageData(imageData, 0, 0);
     return canvas1.toDataURL("image/png");
   }
+  // eslint-disable-next-line no-unused-vars
   const readImage = (uri) => {
     (async () => {
       const worker = createWorker();

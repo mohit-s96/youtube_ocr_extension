@@ -16,8 +16,8 @@
   margin: 0 auto;
   background: #282c34;
   padding: 35px;
-  border: 2px solid #fff;
-  border-radius: 20px/50px;
+  /* border: 2px solid #fff; */
+  border-radius: 4px;
   background-clip: padding-box;
   text-align: center;
 }
@@ -44,7 +44,7 @@
   outline: none !important;
   background-color: #404958 !important;
   transition: all 0.2s linear !important;
-  font-size: 1.2em !important;
+  font-size: 1.5em !important;
   color: #fff !important;
 }
 .ocr_text:focus {

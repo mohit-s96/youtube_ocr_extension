@@ -1,4 +1,4 @@
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
+[![MIT License](https://img.shields.io/github/license/mohit-s96/youtube_ocr_extension)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 
 ![Logo](/assets/favicon.png)
 

@@ -4,8 +4,7 @@ var webpack = require("webpack"),
   env = require("./utils/env"),
   CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
   CopyWebpackPlugin = require("copy-webpack-plugin"),
-  HtmlWebpackPlugin = require("html-webpack-plugin"),
-  WriteFilePlugin = require("write-file-webpack-plugin");
+  HtmlWebpackPlugin = require("html-webpack-plugin");
 
 // load the secrets
 var alias = {};
@@ -42,17 +41,25 @@ var options = {
   output: {
     path: path.join(__dirname, "build"),
     filename: "[name].bundle.js",
+    clean: true,
+    publicPath: "/",
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader",
-        exclude: /node_modules/,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+          },
+        ],
       },
       {
         test: new RegExp(".(" + fileExtensions.join("|") + ")$"),
-        loader: "file-loader?name=[name].[ext]",
+        type: "asset/resource",
         exclude: /node_modules/,
       },
       {
@@ -64,36 +71,61 @@ var options = {
   },
   resolve: {
     alias: alias,
+    extensions: fileExtensions
+      .map((extension) => "." + extension)
+      .concat([".js", ".css"]),
   },
   plugins: [
     // clean the build folder
     new CleanWebpackPlugin({
-      cleanStaleWebpackAssets: false,
+      verbose: false,
     }),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
-    new CopyWebpackPlugin([
-      {
-        from: "src/manifest.json",
-        transform: function (content, path) {
-          // generates the manifest file using the package.json informations
-          return Buffer.from(
-            JSON.stringify({
-              description: process.env.npm_package_description,
-              version: process.env.npm_package_version,
-              ...JSON.parse(content.toString()),
-            })
-          );
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "src/manifest.json",
+          to: path.join(__dirname, "build"),
+          force: true,
+          transform: function (content, path) {
+            // generates the manifest file using the package.json informations
+            return Buffer.from(
+              JSON.stringify({
+                description: process.env.npm_package_description,
+                version: process.env.npm_package_version,
+                ...JSON.parse(content.toString()),
+              })
+            );
+          },
         },
-      },
-    ]),
+      ],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "src/content.css",
+          to: path.join(__dirname, "build"),
+          force: true,
+        },
+      ],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "src/img/icon-128.png",
+          to: path.join(__dirname, "build"),
+          force: true,
+        },
+      ],
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
       chunks: ["popup"],
+      cache: false,
     }),
-    new WriteFilePlugin(),
-  ],
+  ].filter(Boolean),
 };
 
 if (env.NODE_ENV === "development") {

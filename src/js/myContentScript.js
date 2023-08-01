@@ -93,12 +93,6 @@ function cropInit() {
     renderResultsOverlay();
     const boxDimensions = div.getBoundingClientRect();
     div.remove();
-    console.log("cropFigures => ", {
-      width: boxDimensions.width,
-      height: boxDimensions.height,
-      x: boxDimensions.x - pX,
-      y: boxDimensions.y - pY,
-    });
 
     try {
       const uri = screenshot({
@@ -108,12 +102,8 @@ function cropInit() {
         y: boxDimensions.y - pY,
         useCORS: true,
       });
-      // const img = document.createElement("img");
-      // img.src = uri;
-      // window.open().document.body.appendChild(img);
       readImage(uri);
     } catch (error) {
-      console.trace("Trace");
       console.log(error);
     }
 
@@ -146,14 +136,12 @@ function cropInit() {
   // eslint-disable-next-line no-unused-vars
   const readImage = (uri) => {
     (async () => {
-      const worker = createWorker();
-      await worker.load();
+      const worker = await createWorker();
       await worker.loadLanguage("eng");
       await worker.initialize("eng");
       const {
         data: { text },
       } = await worker.recognize(uri);
-      console.log(text);
       sendMessage(text);
       document.querySelector(".ocr_welcome").textContent = "Scan complete";
       document.querySelector(".ocr_text").value = text;

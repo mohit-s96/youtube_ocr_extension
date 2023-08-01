@@ -1,9 +1,9 @@
 {
-  "name": "chrome-extension-webpack",
-  "version": "0.0.1",
-  "description": "A boilerplate to chrome extension with webpack",
+  "name": "youtube-video-ocr",
+  "description": "Select and area from a youtube video and process it to text.",
+  "version": "1.1",
   "scripts": {
-    "build": "node utils/build.js && cp src/content.css build && cp assets/favicon.png build",
+    "build": "node utils/build.js",
     "start": "node utils/webserver.js"
   },
   "devDependencies": {

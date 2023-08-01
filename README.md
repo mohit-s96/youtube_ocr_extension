@@ -2,6 +2,8 @@
 
 ![Logo](/assets/favicon.png)
 
+## For Manifest V2 check out the [manifest-v2 branch](https://github.com/mohit-s96/youtube_ocr_extension/tree/manifest-v2)
+
 # Youtube OCR - Read text from within a youtube video
 
 This is a 100% client-side chrome extension which allows you to read text from witihin a youtube video.

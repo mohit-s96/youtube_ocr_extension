@@ -9,6 +9,10 @@
 This is a 100% client-side Chrome extension that allows you to read text from within a YouTube video.
 This is achieved through the TesseractJS library which wraps the emscripten port of the original Tesseract implementation.
 
+## Usage
+
+Start by clicking the 'Start Crop' button from the extension popup or by using the shortcut `Cmd + Shift + o` (mac) or `Ctrl + Shift + o`.
+
 ## Motivation
 
 - A lot of times when watching a YouTube video you come across a text of some information or code which is of use but there is no way to get it except just typing it out. Eg shell commands in tutorial videos or some text in a news video. This extension solves this problem by allowing the user to copy plain text directly from the YouTube video screen.
@@ -18,7 +22,7 @@ This is achieved through the TesseractJS library which wraps the emscripten port
 Clone the project
 
 ```bash
-  git clone https://github.com/msx47/youtube_ocr_extension.git
+  git clone https://github.com/mohit-s96/youtube_ocr_extension.git
 ```
 
 Go to the project directory
@@ -30,13 +34,13 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  npm install
+  yarn install
 ```
 
 Build
 
 ```bash
-  npm run build
+  yarn build
 ```
 
 Load unpacked in the Chrome extensions menu and select the build folder generated in the previous step.
@@ -68,5 +72,3 @@ If the code editor doesn't add indentation lines into the code then yes it can r
 - Firefox support
 
 - New models to support more fonts
-
-- Improved UI

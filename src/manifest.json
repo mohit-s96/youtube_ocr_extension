@@ -5,7 +5,7 @@
   "description": "Select and area from a youtube video and process it to text.",
   "version": "1.1",
 
-  "background": { "service_worker": "eventPage.bundle.js", "type": "module" },
+  "background": { "service_worker": "background.js", "type": "module" },
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-128.png"
@@ -15,14 +15,32 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["myContentScript.bundle.js"],
-      "css": ["content.css"]
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["contentScript.js"],
+      "css": ["styles.css"]
     }
   ],
-  "permissions": ["tabs"],
-  "host_permissions": ["https://www.youtube.com/*"],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "worker.min.js",
+        "tesseract-core.wasm",
+        "tesseract-core.wasm.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "start-crop": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O",
+        "mac": "Command+Shift+O"
+      },
+      "description": "Start OCR crop"
+    }
+  },
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
-  }
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "permissions": ["activeTab", "scripting", "offscreen"]
 }

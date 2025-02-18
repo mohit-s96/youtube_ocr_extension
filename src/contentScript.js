@@ -1,44 +1,39 @@
-/* eslint-disable no-undef */
-import { createWorker } from "tesseract.js";
+let clearPreviousListeners = null;
 
-chrome.runtime.sendMessage({ todo: "showPageAction" });
+async function performOCR(imageData) {
+  try {
+    const text = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        {
+          type: "startOcr",
+          image: imageData,
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve(response);
+          }
+        }
+      );
+    });
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.todo === "sendPageInfo") {
-    sendResponse({ todo: "pageInfo", uri: window.location.href });
+    console.log("CONTENT OCR: ", text);
+    return text;
+  } catch (error) {
+    console.error("OCR error:", error);
+    throw error;
   }
-
-  if (request.todo === "startCrop") {
-    cropInit();
-    sendResponse({ todo: "started" });
-  }
-});
-
-function renderResultsOverlay() {
-  const template = `
-  <div class="ocr_box">
-	<h2 class="ocr_welcome" >Processing your crop</h2>
-  <p class="ocr_tip"><small>*Click Outside the box to exit</small></p>
-  <p class="ocr_tip ocr_warning">Processing the text can sometimes take a little longer depending on text quantity, quality and your system</p>
-  <textarea class="ocr_text" cols="30" rows="10"></textarea>
-</div>
-  `;
-  const div = document.createElement("div");
-  div.className = "ocr_main_overlay";
-  div.innerHTML = template;
-  document.body.appendChild(div);
-  document
-    .querySelector(".ocr_main_overlay")
-    .addEventListener(
-      "click",
-      (e) => e.target.className === "ocr_main_overlay" && e.target.remove()
-    );
 }
 
-function cropInit() {
+function initCrop() {
   const screenshotTarget = document.querySelector(
     ".video-stream.html5-main-video"
   );
+  if (!screenshotTarget) {
+    alert("No video found on this page");
+    return;
+  }
 
   screenshotTarget.style.cursor = "crosshair";
 
@@ -68,9 +63,11 @@ function cropInit() {
     div.style.width = x4 - x3 + "px";
     div.style.height = y4 - y3 + "px";
   }
+
   window.addEventListener("mousedown", downFunction);
   window.addEventListener("mousemove", moveFunction);
   window.addEventListener("mouseup", cropOnMouseDown);
+
   function downFunction(e) {
     flag = false;
     if (!flag) {
@@ -80,6 +77,7 @@ function cropInit() {
       reCalc();
     }
   }
+
   function moveFunction(e) {
     if (!flag) {
       x2 = e.clientX;
@@ -87,9 +85,9 @@ function cropInit() {
       reCalc();
     }
   }
-  function cropOnMouseDown() {
+
+  async function cropOnMouseDown() {
     screenshotTarget.style.cursor = "unset";
-    sendLoadingMessage();
     renderResultsOverlay();
     const boxDimensions = div.getBoundingClientRect();
     div.remove();
@@ -102,9 +100,15 @@ function cropInit() {
         y: boxDimensions.y - pY,
         useCORS: true,
       });
-      readImage(uri);
+
+      document.querySelector(".ocr_welcome").textContent =
+        "Processing image...";
+      const text = await performOCR(uri);
+      document.querySelector(".ocr_welcome").textContent = "Scan complete";
+      document.querySelector(".ocr_text").value = text;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      document.querySelector(".ocr_welcome").textContent = "Error during OCR";
     }
 
     window.removeEventListener("mousemove", moveFunction);
@@ -113,6 +117,7 @@ function cropInit() {
     flag = true;
     div.hidden = 1;
   }
+
   function screenshot(options = {}) {
     const canvas = document.createElement("canvas");
     const video = screenshotTarget;
@@ -133,25 +138,45 @@ function cropInit() {
     ctx_.putImageData(imageData, 0, 0);
     return canvas1.toDataURL("image/png");
   }
-  // eslint-disable-next-line no-unused-vars
-  const readImage = (uri) => {
-    (async () => {
-      const worker = await createWorker();
-      await worker.loadLanguage("eng");
-      await worker.initialize("eng");
-      const {
-        data: { text },
-      } = await worker.recognize(uri);
-      sendMessage(text);
-      document.querySelector(".ocr_welcome").textContent = "Scan complete";
-      document.querySelector(".ocr_text").value = text;
-      await worker.terminate();
-    })();
+
+  return () => {
+    window.removeEventListener("mousemove", moveFunction);
+    window.removeEventListener("mousedown", downFunction);
+    window.removeEventListener("mouseup", cropOnMouseDown);
+    screenshotTarget.style.cursor = "unset";
+    if (document.getElementById("ocr_testDiv")) {
+      document.getElementById("ocr_testDiv").remove();
+    }
   };
 }
-function sendMessage(text) {
-  chrome.runtime.sendMessage({ todo: "readImageData", data: text });
-}
-function sendLoadingMessage() {
-  chrome.runtime.sendMessage({ todo: "readingImageData" });
+
+chrome.runtime.onMessage.addListener((request) => {
+  if (request.type === "startCrop") {
+    if (clearPreviousListeners) {
+      clearPreviousListeners();
+    }
+    clearPreviousListeners = initCrop();
+  }
+  return true;
+});
+
+function renderResultsOverlay() {
+  const template = `
+    <div class="ocr_box">
+      <h2 class="ocr_welcome">Processing your crop</h2>
+      <p class="ocr_tip"><small>*Click Outside the box to exit</small></p>
+      <p class="ocr_tip ocr_warning">Processing the text can sometimes take a little longer depending on text quantity, quality and your system</p>
+      <textarea class="ocr_text" cols="30" rows="10"></textarea>
+    </div>
+  `;
+  const div = document.createElement("div");
+  div.className = "ocr_main_overlay";
+  div.innerHTML = template;
+  document.body.appendChild(div);
+  document
+    .querySelector(".ocr_main_overlay")
+    .addEventListener(
+      "click",
+      (e) => e.target.className === "ocr_main_overlay" && e.target.remove()
+    );
 }

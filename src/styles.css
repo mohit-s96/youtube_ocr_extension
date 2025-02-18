@@ -1,0 +1,104 @@
+.ocr_main_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ocr_box {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 80vw;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(20px);
+  animation: slideUp 0.3s ease-out forwards;
+  height: 60vh;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.ocr_welcome {
+  margin: 0 0 1.5rem 0;
+  font-size: 2.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.ocr_tip {
+  margin: 0.75rem 0;
+  color: #64748b;
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
+
+.ocr_warning {
+  color: #d1b411;
+  background: #fffdc6;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #dcc726;
+  margin: 1rem 0;
+}
+
+.ocr_text {
+  width: 100%;
+  min-height: 150px;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+.ocr_text:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+#ocr_testDiv {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* Add some basic font styling to the entire modal */
+.ocr_main_overlay * {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
